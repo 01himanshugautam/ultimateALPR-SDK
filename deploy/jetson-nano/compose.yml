@@ -1,0 +1,42 @@
+services:
+  anpr:
+    image: ghcr.io/parksmart-tech/parksmart-anpr:jetson-nano-jp441-latest
+    pull_policy: always
+    runtime: nvidia
+    restart: unless-stopped
+    environment:
+      # RTSP URLs are comma-separated. A single value in the other fields is
+      # reused for every camera; use comma-separated values to override each.
+      RTSP_URLS: "rtsp://admin:cp_plus_123@192.168.100.70/cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46YWRtaW4lNDAxMjM="
+      SERVER_URLS: "127.0.0.1"
+      PORTS: "9898"
+      LOG_TYPES: "EXIT"
+      DESCRIPTIONS: "Basement Entry"
+      RELAYS: "-1"
+      CHARSET: "latin"
+      PARALLEL: "false"
+      RECTIFY: "false"
+      SHOW_FRAME: "false"
+      USE_PIPELINE: "false"
+      TENSORRT_ENABLED: "true"
+      NPU_ENABLED: "false"
+      OPENVINO_ENABLED: "false"
+      WINDOW_PREFIX: "Wave One"
+      ENCODING: "H264"
+      MIN_CONFIDENCE: "40"
+      TOKEN_DATA: ""
+      TOKEN_FILE: ""
+      GPIO_PIN: ""
+      DEFAULT_GPIO_LEVEL: ""
+    network_mode: host
+    volumes:
+      - /run/udev:/run/udev:ro
+      - /dev:/dev:ro
+      - /home/parksmart/anpr/images:/home/parksmart/anpr/images
+      - ../../assets/models.tensorrt/optimized:/opt/ultimatealpr/assets/models.tensorrt/optimized:ro
+    logging:
+      driver: local
+      options:
+        max-size: 3m
+        max-file: "10"
+
