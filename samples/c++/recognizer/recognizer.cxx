@@ -297,8 +297,14 @@ int main(int argc, char *argv[])
 #endif
 
 #if defined(JETSON) || defined(ORIN)
-	int device_id = 0;
-	cv::cuda::setDevice(device_id);
+	// JetPack's base image can provide a CPU-only OpenCV build even though
+	// TensorRT/CUDA are available to the SDK.  Selecting an OpenCV CUDA device
+	// unconditionally makes the recognizer abort before SDK initialization.
+	// OpenCV CUDA is only used when the linked OpenCV build exposes a device.
+	if (cv::cuda::getCudaEnabledDeviceCount() > 0)
+	{
+		cv::cuda::setDevice(0);
+	}
 #endif
 
 	// local variables

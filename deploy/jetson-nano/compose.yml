@@ -3,6 +3,10 @@ services:
     image: ghcr.io/parksmart-tech/parksmart-anpr:jetson-nano-jp441-latest
     pull_policy: always
     runtime: nvidia
+    # The image runs as UID 10001. Grant access to Jetson GPU device nodes,
+    # which are owned by the host's video group (GID 44 on JetPack 4.x).
+    group_add:
+      - "44"
     restart: unless-stopped
     environment:
       # RTSP URLs are comma-separated. A single value in the other fields is
