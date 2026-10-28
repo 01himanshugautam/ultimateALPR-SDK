@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ORG="${ORG:-parksmart-tech}"
+ORG="${ORG:-himanshu-parksmart}"
 VERSION="${VERSION:-$(date +%Y%m%d)}"
 IMAGE="ghcr.io/${ORG}/parksmart-anpr:jetson-nano-jp441-v${VERSION}"
 LATEST_IMAGE="ghcr.io/${ORG}/parksmart-anpr:jetson-nano-jp441-latest"

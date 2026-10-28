@@ -1,6 +1,6 @@
 services:
   anpr:
-    image: ghcr.io/parksmart-tech/parksmart-anpr:jetson-nano-jp441-latest
+    image: ghcr.io/himanshu-parksmart/parksmart-anpr:jetson-nano-jp441-latest
     pull_policy: always
     runtime: nvidia
     # The image runs as UID 10001. Grant access to Jetson GPU device nodes,
@@ -11,25 +11,29 @@ services:
     environment:
       # RTSP URLs are comma-separated. A single value in the other fields is
       # reused for every camera; use comma-separated values to override each.
-      RTSP_URLS: "rtsp://admin:cp_plus_123@192.168.100.70/cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46YWRtaW4lNDAxMjM="
+      RTSP_URLS: "${RTSP_URLS:-rtsp://admin:admin123@192.168.220.154:554/avstream/channel=1/stream=0.sdp}"
       SERVER_URLS: "127.0.0.1"
       PORTS: "9898"
-      LOG_TYPES: "EXIT"
-      DESCRIPTIONS: "Basement Entry"
+      LOG_TYPES: "ENTRY"
+      DESCRIPTIONS: "Gate 2"
       RELAYS: "-1"
       CHARSET: "latin"
       PARALLEL: "false"
-      RECTIFY: "false"
+      # The gate camera is mounted at an angle; rectify the detected plate
+      # before OCR so slanted registrations remain readable.
+      RECTIFY: "true"
       SHOW_FRAME: "false"
       USE_PIPELINE: "false"
       TENSORRT_ENABLED: "true"
       NPU_ENABLED: "false"
       OPENVINO_ENABLED: "false"
-      WINDOW_PREFIX: "Wave One"
+      WINDOW_PREFIX: "Grandthum"
       ENCODING: "H264"
       MIN_CONFIDENCE: "40"
-      TOKEN_DATA: ""
-      TOKEN_FILE: ""
+      # Keep the hardware-bound SDK token outside version control. Put
+      # TOKEN_DATA=<token> in deploy/jetson-nano/.env on the controller.
+      TOKEN_DATA: "${TOKEN_DATA:-}"
+      TOKEN_FILE: "${TOKEN_FILE:-}"
       GPIO_PIN: ""
       DEFAULT_GPIO_LEVEL: ""
     network_mode: host

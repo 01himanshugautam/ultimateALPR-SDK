@@ -1,0 +1,10 @@
+[Unit]
+Description=Clean old ultimateALPR files and safe system caches
+After=docker.service
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/default/ultimatealpr-storage-cleanup
+ExecStart=/usr/local/sbin/ultimatealpr-storage-cleanup
+Nice=19
+IOSchedulingClass=idle

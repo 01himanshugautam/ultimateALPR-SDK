@@ -15,6 +15,31 @@ deploy/jetson-nano/prepare-models.sh
 docker compose -f deploy/jetson-nano/compose.yml pull
 ```
 
+## Automatic storage cleanup
+
+Install the daily cleanup timer on space-constrained Jetson controllers:
+
+```bash
+sudo install -m 0755 deploy/jetson-nano/cleanup-storage.sh \
+  /usr/local/sbin/ultimatealpr-storage-cleanup
+sudo install -m 0644 deploy/jetson-nano/ultimatealpr-storage-cleanup.service \
+  deploy/jetson-nano/ultimatealpr-storage-cleanup.timer /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now ultimatealpr-storage-cleanup.timer
+```
+
+The defaults retain seven days of captured ANPR images and run daily around
+03:15. Under 1 GiB free, the script also cleans package caches, stopped
+containers, unused Docker images older than seven days, and old build cache,
+then reduces captured-image retention to one day if necessary. It never
+prunes Docker volumes or images used by a container. Override settings in
+`/etc/default/ultimatealpr-storage-cleanup`.
+Preview image deletions and pressure cleanup without changing anything:
+
+```bash
+sudo DRY_RUN=true /usr/local/sbin/ultimatealpr-storage-cleanup
+```
+
 Validate without replacing the live systemd service:
 
 ```bash
@@ -37,10 +62,10 @@ which may be missing on minimized controller images.
 ## Build and publish the controller image
 
 ```bash
-ORG=parksmart-tech deploy/jetson-nano/build-controller-image.sh
+ORG=himanshu-parksmart deploy/jetson-nano/build-controller-image.sh
 ```
 
 This publishes
-`ghcr.io/parksmart-tech/parksmart-anpr:jetson-nano-jp441-vYYYYMMDD`.
+`ghcr.io/himanshu-parksmart/parksmart-anpr:jetson-nano-jp441-vYYYYMMDD`.
 It also updates the Compose deployment tag
-`ghcr.io/parksmart-tech/parksmart-anpr:jetson-nano-jp441-latest`.
+`ghcr.io/himanshu-parksmart/parksmart-anpr:jetson-nano-jp441-latest`.

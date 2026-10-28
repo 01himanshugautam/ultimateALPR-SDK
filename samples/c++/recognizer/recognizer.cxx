@@ -1130,18 +1130,10 @@ static void process_image_result(UltAlprSdkResult result, Mat frame, int index, 
 		std::chrono::time_point<std::chrono::system_clock> compare_time = std::chrono::system_clock::now();
 
 		Rect roi = Rect(
-			(int)width * 0.2,
-			(int)height * 0.2,
-			(int)width * 0.6,
-			(int)height * 0.6);
-		if (pushRawData)
-		{
-			roi = Rect(
-				(int)width * 0.1,
-				(int)height * 0.1,
-				(int)width * 0.8,
-				(int)height * 0.8);
-		}
+			(int)width * 0.1,
+			(int)height * 0.1,
+			(int)width * 0.8,
+			(int)height * 0.8);
 
 		for (int j = 0; j < new_vehicle_detections.size(); j++)
 		{
@@ -1234,6 +1226,15 @@ static void process_image_result(UltAlprSdkResult result, Mat frame, int index, 
 				new_vehicle_detections[j].first_seen_at = current_time;
 				new_vehicle_detections[j].last_seen_at = current_time;
 				new_vehicle_detections[j].initial_position = cv::Point(new_vehicle_detections[j].centroid.x, new_vehicle_detections[j].centroid.y);
+				if (roi.contains(new_vehicle_detections[j].centroid))
+				{
+					new_vehicle_detections[j].passed_through_centre = true;
+					new_vehicle_detections[j].centre_frame = new_vehicle_detections[j].captured_frame;
+					if (new_vehicle_detections[j].valid_vehicle_number != "")
+					{
+						new_vehicle_detections[j].valid_centre_frame = new_vehicle_detections[j].captured_frame;
+					}
+				}
 				vehicles.push_back(new_vehicle_detections[j]);
 			}
 		}
