@@ -1,0 +1,30 @@
+services:
+  anpr:
+    image: ghcr.io/himanshu-parksmart/parksmart-anpr:rockchip-rk3568-latest
+    pull_policy: if_not_present
+    runtime: rk3568-runc
+    restart: unless-stopped
+    environment:
+      RTSP_URLS: "${RTSP_URLS}"
+      SERVER_URLS: "${SERVER_URLS:-127.0.0.1}"
+      PORTS: "${PORTS:-9898}"
+      LOG_TYPES: "${LOG_TYPES:-ENTRY}"
+      DESCRIPTIONS: "${DESCRIPTIONS:-Rockchip ANPR}"
+      RELAYS: "${RELAYS:--1}"
+      ROIS: "${ROIS:-0.1,0.1,0.8,0.8}"
+      CHARSET: "${CHARSET:-latin}"
+      PARALLEL: "${PARALLEL:-false}"
+      RECTIFY: "${RECTIFY:-true}"
+      USE_PIPELINE: "${USE_PIPELINE:-false}"
+      ENCODING: "${ENCODING:-H264}"
+      MIN_CONFIDENCE: "${MIN_CONFIDENCE:-40}"
+      TOKEN_DATA: "${TOKEN_DATA:-}"
+      TOKEN_FILE: "${TOKEN_FILE:-}"
+    network_mode: host
+    volumes:
+      - /home/parksmart/anpr/images:/home/parksmart/anpr/images
+    logging:
+      driver: local
+      options:
+        max-size: "3m"
+        max-file: "10"
